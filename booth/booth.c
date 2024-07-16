@@ -142,26 +142,26 @@ int main()
         if ((temp[size - 1] == 0) && (a == 1))
         {
             addTwoBinaries(accumulator, second, size);
-            printRow(count, accumulator, temp, a, "Addition", size);
+            printRow(count, accumulator, temp, a, "Q[0]Q-1=10\tAddition A=A+M", size);
             arithmeticRightShift(accumulator, temp, &a, size);
             count--;
-            printRow(count, accumulator, temp, a, "Shift", size);
+            printRow(count, accumulator, temp, a, "Arithematic Right Shift A Q Q-1", size);
             printf("\n");
         }
         else if ((temp[size - 1] == 1) && (a == 0))
         {
             addTwoBinaries(accumulator, complementSecond, size);
-            printRow(count, accumulator, temp, a, "Subtraction", size);
+            printRow(count, accumulator, temp, a, "Q[0]Q-1=01\tSubtraction A=A-M", size);
             arithmeticRightShift(accumulator, temp, &a, size);
             count--;
-            printRow(count, accumulator, temp, a, "Shift", size);
+            printRow(count, accumulator, temp, a, "Arithematic Right Shift A Q Q-1", size);
             printf("\n");
         }
         else
         {
             arithmeticRightShift(accumulator, temp, &a, size);
             count--;
-            printRow(count, accumulator, temp, a, "Shift", size);
+            printRow(count, accumulator, temp, a, "Arithematic Right Shift A Q Q-1", size);
             printf("\n");
         }
     }
