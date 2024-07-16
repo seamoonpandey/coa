@@ -9,35 +9,66 @@
 \pagestyle{empty}
 \geometry{a4paper, margin=0.5in}
 
-
 \begin{document}
 
-
-
 \section*{Objective}
-The objective of this lab is to implement a C program to perform binary addition and subtraction of two decimal numbers, including handling of negative numbers using two's complement representation.
+The objective of this lab is to implement C programs to perform binary addition and subtraction of two decimal numbers, including handling of negative numbers using two's complement representation.
 
 \section*{Algorithm}
 
+\subsection*{Common Functions}
+\begin{enumerate}
+    \item Convert the decimal number to binary and store it in an array.
+    \item If the number is negative, compute the two's complement for the binary number.
+    \item Print the binary number.
+\end{enumerate}
+
+\subsection*{Addition}
 \begin{enumerate}
     \item Start.
     \item Initialize and take number inputs in decimal.
-    \item Initialize arrays \texttt{first} and \texttt{second} of a specific bit size.
-    \item Convert the first decimal number to binary. If the number is negative, compute the two's complement for the number and store it in \texttt{first}.
-    \item Convert the second decimal number to binary. If the number is negative, compute the two's complement for the number and store it in \texttt{second}.
-    \item Initialize two arrays \texttt{sum} and \texttt{diff} to store the sum of two numbers and their differences respectively.
-    \item Add two numbers \texttt{first} and \texttt{second} and store the result in array \texttt{sum}. Print the output.
-    \item Compute the two's complement of the number in the \texttt{second} array and add it to the \texttt{first} array. Store the output in array \texttt{diff} and print the output.
+    \item Convert the first decimal number to binary. If the number is negative, compute the two's complement for the number and store it.
+    \item Convert the second decimal number to binary. If the number is negative, compute the two's complement for the number and store it.
+    \item Initialize an array to store the sum of the two binary numbers.
+    \item Add the two binary numbers and store the result.
+    \item Print the binary sum.
     \item Stop.
 \end{enumerate}
 
-\section*{Source Code}
+\subsection*{Subtraction}
+\begin{enumerate}
+    \item Start.
+    \item Initialize and take number inputs in decimal.
+    \item Convert the first decimal number to binary. If the number is negative, compute the two's complement for the number and store it.
+    \item Convert the second decimal number to binary. If the number is negative, compute the two's complement for the number and store it.
+    \item Compute the two's complement of the second binary number.
+    \item Add the first binary number to the two's complement of the second binary number.
+    \item Print the binary difference.
+    \item Stop.
+\end{enumerate}
+
+\section*{Header File: \texttt{binary\_operations.h}}
 
 \begin{verbatim}
-#include <stdio.h>
-#include <stdlib.h>
+#ifndef BINARY_OPERATIONS_H
+#define BINARY_OPERATIONS_H
 
 #define SIZE 5
+
+void decimalToBinary(int n, int *binary, int size);
+void twosComplement(int *binary, int size);
+void printBinary(int *binary, int size);
+void addTwoBinaries(int *binary1, int *binary2, int size);
+
+#endif
+\end{verbatim}
+
+\section*{Source File: \texttt{binary\_operations.c}}
+
+\begin{verbatim}
+#include "binary_operations.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void decimalToBinary(int n, int *binary, int size) {
     if (n < 0) {
@@ -68,6 +99,13 @@ void twosComplement(int *binary, int size) {
     }
 }
 
+void printBinary(int *binary, int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d", binary[i]);
+    }
+    printf("\n");
+}
+
 void addTwoBinaries(int *binary1, int *binary2, int size) {
     int carry = 0;
     for (int i = size - 1; i >= 0; i--) {
@@ -83,24 +121,13 @@ void addTwoBinaries(int *binary1, int *binary2, int size) {
         }
     }
 }
+\end{verbatim}
 
-void subtractTwoBinaries(int *binary1, int *binary2, int size) {
-    int twosComp[SIZE];
-    
-    for (int i = 0; i < size; i++) {
-        twosComp[i] = binary2[i];
-    }
-    
-    twosComplement(twosComp, size);
-    addTwoBinaries(binary1, twosComp, size);
-}
+\section*{Source File: \texttt{addition.c}}
 
-void printBinary(int *binary, int size) {
-    for (int i = 0; i < size; i++) {
-        printf("%d", binary[i]);
-    }
-    printf("\n");
-}
+\begin{verbatim}
+#include <stdio.h>
+#include "binary_operations.h"
 
 int main() {
     int a1, b1, a[SIZE], b[SIZE];
@@ -137,11 +164,49 @@ int main() {
     printf("Sum of the given two numbers: ");
     printBinary(sum, SIZE);
 
+    return 0;
+}
+\end{verbatim}
+
+\section*{Source File: \texttt{subtraction.c}}
+
+\begin{verbatim}
+#include <stdio.h>
+#include "binary_operations.h"
+
+int main() {
+    int a1, b1, a[SIZE], b[SIZE];
+
+    printf("Enter the first number: ");
+    scanf("%d", &a1);
+    printf("Enter the second number: ");
+    scanf("%d", &b1);
+    printf("\n");
+
+    decimalToBinary(a1, a, SIZE);
+    if (a1 < 0) {
+        twosComplement(a, SIZE);
+    }
+
+    printf("First number in binary: ");
+    printBinary(a, SIZE);
+
+    decimalToBinary(b1, b, SIZE);
+    if (b1 < 0) {
+        twosComplement(b, SIZE);
+    }
+
+    printf("Second number in binary: ");
+    printBinary(b, SIZE);
+    printf("\n");
+
+    // To subtract b from a, we add a to the two's complement of b
+    twosComplement(b, SIZE);
     int diff[SIZE];
     for (int i = 0; i < SIZE; i++) {
         diff[i] = a[i];
     }
-    subtractTwoBinaries(diff, b, SIZE);
+    addTwoBinaries(diff, b, SIZE);
 
     printf("Difference of the given two numbers: ");
     printBinary(diff, SIZE);
@@ -150,26 +215,41 @@ int main() {
 }
 \end{verbatim}
 
-\section*{Sample Input/Output}
+\section*{Sample Input/Output for Addition}
 \begin{itemize}
     \item \textbf{Input:} 7 and -3
     \item \textbf{Output:}
     \begin{verbatim}
 Enter the first number: 7
-Enter the second number: -3
+Enter the second number: 3
 
 First number in binary: 00111
-Second number in binary: 11101
+Second number in binary: 00011
 
-Sum of the given two numbers: 00010
-Difference of the given two numbers: 10100
+Sum of the given two numbers: 01010
     \end{verbatim}
 \end{itemize}
 
+\section*{Sample Input/Output for Subtraction}
+\begin{itemize}
+    \item \textbf{Input:} 7 and -3
+    \item \textbf{Output:}
+    \begin{verbatim}
+Enter the first number: 7
+Enter the second number: 3
+
+First number in binary: 00111
+Second number in binary: 00011
+
+Difference of the given two numbers: 00100
+    \end{verbatim}
+\end{itemize}
+
+
 \section*{Discussion}
-The program successfully converts decimal numbers to binary, performs addition and subtraction using two's complement for negative numbers, and displays the results in binary format. The approach ensures correct handling of negative numbers by using two's complement, which simplifies binary arithmetic operations.
+The programs successfully convert decimal numbers to binary, perform addition and subtraction using two's complement for negative numbers, and display the results in binary format. The approach ensures correct handling of negative numbers by using two's complement, which simplifies binary arithmetic operations.
 
 \section*{Conclusion}
-The implemented C program correctly performs binary addition and subtraction of two decimal numbers, including handling negative numbers using two's complement representation. This lab demonstrates the process of binary arithmetic operations and the importance of two's complement in representing negative numbers.
+The implemented C programs correctly perform binary addition and subtraction of two decimal numbers, including handling negative numbers using two's complement representation. This lab demonstrates the process of binary arithmetic operations and the importance of two's complement in representing negative numbers.
 
 \end{document}
