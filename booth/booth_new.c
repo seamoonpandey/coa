@@ -12,6 +12,7 @@ void printBinary(int num, int bits) {
 void arithmeticRightShift(int *A, int *Q, bool *a, int n) {
     bool signA = *A < 0;
     *a = (*Q & 1);
+    *Q = (*Q >> 1) & ~(1 << (n - 1));
     *Q = (*Q >> 1) | ((*A & 1) << (n - 1));
     *A = (*A >> 1);
     if (signA) {
